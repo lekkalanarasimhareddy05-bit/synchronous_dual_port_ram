@@ -1,0 +1,51 @@
+module dual_port_ram(
+
+    input clk,
+    input reset,
+
+    // Port A
+    input we_a,
+    input re_a,
+    input [3:0] addr_a,
+    input [7:0] data_in_a,
+    output reg [7:0] data_out_a,
+
+    // Port B
+    input we_b,
+    input re_b,
+    input [3:0] addr_b,
+    input [7:0] data_in_b,
+    output reg [7:0] data_out_b
+);
+
+// 16 x 8 Memory
+reg [7:0] mem [0:15];
+
+always @(posedge clk or posedge reset)
+begin
+    if (reset)
+    begin
+        data_out_a <= 8'd0;
+        data_out_b <= 8'd0;
+    end
+    else
+    begin
+        // Port A Write
+        if (we_a)
+            mem[addr_a] <= data_in_a;
+
+        // Port A Read
+        if (re_a)
+            data_out_a <= mem[addr_a];
+
+        // Port B Write
+        if (we_b)
+            mem[addr_b] <= data_in_b;
+
+        // Port B Read
+        if (re_b)
+            data_out_b <= mem[addr_b];
+    end
+end
+
+endmodule
